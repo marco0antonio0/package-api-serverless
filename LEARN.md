@@ -1,133 +1,142 @@
 
-# Express on Netlify with Layered Architecture
+# Package Project for development serverless with api express and deploy in netlify
 
-![img](https://github.com/marco0antonio0/About-express-netlify/raw/main/imageReadme/imageREADME.png)
-
-Este projeto é uma API para geração de atas acadêmicas, construída utilizando Express e implementada com TypeScript. A arquitetura do projeto segue o padrão em camadas, semelhante ao framework NestJS, para facilitar a organização e manutenção do código.
+Package base para utilizar no desenvolvimento de apis
 
 ## Estrutura do Projeto
 
 ```plaintext
-project/
-│
-├── netlify/
-│   └── functions/
-│       └── api.ts
-│
-├── package.json
-├── netlify.toml
-├── tsconfig.json
+example/
+├── src/
+│   ├── app/
+│   │   ├── hello/
+│   │   │   ├── hello.controller.ts
+│   │   │   └── hello.service.ts
+│   │   └── app.module.ts
+│   └── index.ts
 ├── node_modules/
-├── app/
-│   ├── controller/
-│   │   └── hello.controller.ts
-│   ├── service/
-│       └── hello.service.ts
-│   └── app.module.ts
-├── dist/
-└── index.ts
+├── package.json
+├── tsconfig.json
+└── README.md
 ```
 
-## Descrição das Pastas e Arquivos
+## Como Utilizar
 
-- **netlify/functions/api.ts**: Configuração do servidor para ser utilizado com o Netlify Functions e Serverless.
-- **app/app.module.ts**: Módulo principal que registra todos os controladores e serviços.
-- **app/controller/hello.controller.ts**: Controlador que trata as requisições HTTP para a rota `/hello`.
-- **app/service/hello.service.ts**: Serviço que contém a lógica de negócios para gerar a mensagem "Hello World!".
-- **index.ts**: Ponto de entrada da aplicação, inicializa o servidor Express.
-- **tsconfig.json**: Configurações do TypeScript.
-- **package.json**: Configurações do npm e lista de dependências.
+Este projeto é uma API simples criada com Express e TypeScript, utilizando uma estrutura modular para facilitar a escalabilidade e manutenção.
 
-## Arquitetura do Projeto
+### Pré-requisitos
 
-Este projeto segue a **Arquitetura em Camadas**, que divide a aplicação em módulos distintos, cada um com uma responsabilidade específica.
+- Node.js instalado
+- npm (gerenciador de pacotes do Node.js)
 
-### Camadas
+### Instalação
 
-1. **App**: Configuração e inicialização da aplicação.
-2. **Controller (Controladores)**: Manipula as requisições HTTP e retorna as respostas apropriadas.
-3. **Service (Serviços)**: Contém a lógica de negócios da aplicação.
+1. Clone o repositório:
 
-### Benefícios da Arquitetura em Camadas
+   ```bash
+   git clone https://github.com/marco0antonio0/package-api-serverless
+   cd package-api-serverless
+   ```
 
-- **Separação de Preocupações**: Facilita a manutenção e a compreensão do código.
-- **Modularidade**: Componentes desacoplados permitem modificações independentes.
-- **Reutilização de Código**: Serviços podem ser reutilizados em diferentes partes da aplicação.
-- **Facilidade de Testes**: Separação clara de responsabilidades facilita a escrita de testes.
+2. Instale as dependências:
 
-## Criação de Rotas com App, Controller e Service
+   ```bash
+   npm install
+   ```
 
-### Passo 1: Definir a Rota no Controlador
+### Estrutura de Pastas
 
-No arquivo `hello.controller.ts`, definimos um controlador que manipula as requisições HTTP para a rota `/hello`:
+- `src/`: Contém o código fonte do projeto
+  - `app/`: Contém os módulos da aplicação
+    - `hello/`: Exemplo de módulo com um controlador e um serviço
+      - `hello.controller.ts`: Define as rotas do módulo hello
+      - `hello.service.ts`: Define a lógica de negócios do módulo hello
+    - `app.module.ts`: Configura o aplicativo e suas rotas
+  - `index.ts`: Ponto de entrada principal da aplicação
 
-```typescript
-import { Router, Request, Response } from 'express';
-import { helloService } from '../service/hello.service';
+### Como Iniciar o Projeto
 
-const router = Router();
+Para iniciar o projeto em modo de desenvolvimento (com auto-reload):
 
-router.get('/', (req: Request, res: Response) => {
-  const message = helloService.getHelloMessage();
-  res.send(message);
-});
-
-export const helloController = router;
+```bash
+npm run dev
 ```
 
-### Passo 2: Implementar a Lógica de Negócios no Serviço
+Para compilar o TypeScript e rodar o projeto em produção:
 
-No arquivo `hello.service.ts`, implementamos a lógica de negócios necessária para atender a solicitação:
-
-```typescript
-const getHelloMessage = (): string => {
-  return 'Hello World!';
-};
-
-export const helloService = { getHelloMessage };
+```bash
+npm run build
+npm start
 ```
 
-### Passo 3: Registrar o Controlador no Módulo Principal
+### Fazendo Alterações
 
-No arquivo `app.module.ts`, registramos o controlador:
+1. **Adicionar uma nova rota**:
+   - Crie um novo diretório dentro de `src/app/` para o seu módulo.
+   - Adicione os arquivos de controlador e serviço para a nova funcionalidade.
+   - Importe e use o novo controlador no `app.module.ts`.
 
-```typescript
-import { Application } from 'express';
-import { helloController } from './controller/hello.controller';
+2. **Exemplo de novo módulo**:
 
-export const AppModule = (app: Application) => {
-  app.use('/api/hello', helloController);
-};
-```
+   - Crie um diretório `newModule` dentro de `src/app/`:
 
-### Passo 4: Inicializar o Servidor
+     ```plaintext
+     src/app/newModule/
+     ├── newModule.controller.ts
+     └── newModule.service.ts
+     ```
 
-No arquivo `index.ts`, inicializamos o servidor Express e aplicamos o módulo principal:
+   - **newModule.controller.ts**:
 
-```typescript
-import express from 'express';
-import { AppModule } from './app/app.module';
+     ```typescript
+     import express from 'express';
+     import { newModuleService } from './newModule.service';
 
-const app = express();
-const port = process.env.PORT || 3000;
+     const router = express.Router();
 
-AppModule(app);
+     router.get('/', (req, res) => {
+         const message = newModuleService.getMessage();
+         res.send(message);
+     });
 
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-});
-```
+     export const newModuleController = router;
+     ```
 
-## Contribuição
+   - **newModule.service.ts**:
 
-Contribuições são bem-vindas! Por favor, siga os passos abaixo para contribuir:
+     ```typescript
+     const getMessage = () => {
+         return 'Hello from new module!';
+     };
 
-1. Fork o repositório.
-2. Crie uma nova branch (`git checkout -b feature/nova-feature`).
-3. Commit suas alterações (`git commit -am 'Adiciona nova feature'`).
-4. Push para a branch (`git push origin feature/nova-feature`).
-5. Crie um novo Pull Request.
+     export const newModuleService = { getMessage };
+     ```
 
-## Licença
+   - Adicione o novo módulo ao `app.module.ts`:
 
-Este projeto é licenciado sob a licença ISC. Veja o arquivo [LICENSE](LICENSE.md) para mais detalhes.
+     ```typescript
+     import { newModuleController } from './newModule/newModule.controller';
+
+     export const AppModule = (app: Application) => {
+         app.use(express.json());
+         // Adicione suas rotas aqui
+         app.use('/api/hello', helloController);
+         app.use('/api/new', newModuleController);
+     };
+     ```
+
+3. **Executar o Projeto**:
+
+   Após fazer suas alterações, execute o projeto em modo de desenvolvimento para testar:
+
+   ```bash
+   npm run dev
+   ```
+
+### Contato
+
+Se você tiver alguma dúvida ou sugestão, sinta-se à vontade para entrar em contato.
+
+---
+
+Este é um guia básico para iniciar e trabalhar com este projeto. Para mais detalhes sobre o uso de Express, TypeScript e outras tecnologias usadas aqui, consulte a documentação oficial de cada uma delas.
